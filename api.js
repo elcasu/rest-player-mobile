@@ -1,13 +1,17 @@
-const BASE_API_URL = 'http://192.168.3.101:7000/api'
+const BASE_API_URL = 'http://pi.home.lan:7000/api'
 
 export async function getVideos() {
   try {
     const response = await fetch(`${BASE_API_URL}/videos`)
+    if (!response.ok) {
+      throw new Error('Response error')
+    }
     const json = await response.json()
     return json
   }
   catch (e) {
     console.error(e)
+    throw e
   }
 }
 
