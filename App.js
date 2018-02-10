@@ -5,8 +5,6 @@
  */
 import React, { Component } from 'react'
 import {
-  Platform,
-  StyleSheet,
   Text,
   View,
   ListView,
@@ -15,67 +13,28 @@ import {
   TouchableHighlight,
   StatusBar
 } from 'react-native'
-
 import {
-  getTheme
+  getTheme,
+  mdl
 } from 'react-native-material-kit'
-
 import NavigationBar from 'react-native-navbar'
+import { Icon } from 'react-native-elements'
+import {
+  getVolume,
+  setVolume,
+  getMaxVolume,
+  onVolumeChange
+} from 'react-native-volume'
+import {
+  getVideos,
+  playVideo,
+  stopVideo,
+  volumeUp,
+  volumeDown
+} from './api'
+import { styles } from './style'
 
 const theme = getTheme()
-
-const BASE_API_URL = 'http://192.168.3.104:7000/api'
-
-async function getVideos() {
-  try {
-    const response = await fetch(`${BASE_API_URL}/videos`)
-    const json = await response.json()
-    return json
-  }
-  catch (e) {
-    console.error(e)
-  }
-}
-
-async function playVideo(video) {
-  try {
-    await fetch(`${BASE_API_URL}/videos/${video._id}/play`, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
-    })
-  }
-  catch (e) {
-    console.error(e)
-  }
-}
-
-async function stopVideo() {
-  try {
-    await fetch(`${BASE_API_URL}/videos/stop`, {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
-    })
-  }
-  catch (e) {
-    console.error(e)
-  }
-}
-
-const rightButtonConfig = {
-  title: 'Detener',
-  handler: async () => {
-    this.setState({ isPlaying: false })
-    await stopVideo()
-  }
-}
-
-const titleConfig = {
-  title: 'Reproduciendo...'
-}
 
 export default class App extends Component<{}> {
   constructor() {
@@ -83,8 +42,10 @@ export default class App extends Component<{}> {
     this.state = {
       isPlaying: false,
       isLoading: true,
+      volume: 50,
       videos: []
     }
+    this.stop = this.stop.bind(this)
   }
 
   async componentDidMount() {
@@ -93,13 +54,20 @@ export default class App extends Component<{}> {
       videos,
       isLoading: false
     })
+    onVolumeChange(volume => alert(volume))
   }
 
   async _onVideoPress (video) {
     this.setState({
-      isPlaying: true
+      isPlaying: true,
+      currentVideo: video
     })
     await playVideo(video)
+  }
+
+  async stop() {
+    this.setState({ isPlaying: false })
+    await stopVideo()
   }
 
   render() {
@@ -115,16 +83,23 @@ export default class App extends Component<{}> {
         <ScrollView style={styles.scrollView}>
           {
             this.state.isPlaying && 
-              <NavigationBar
-                title={titleConfig}
-                rightButton={{
-                  title: 'Detener',
-                  handler: async () => {
-                    this.setState({ isPlaying: false })
-                    await stopVideo()
-                  }
-                }}
-              />
+              <View style={{ alignItems: 'center' }}>
+                {
+                  this.state.currentVideo &&
+                    <Text style={ styles.legendLabel }>
+                      { this.state.currentVideo.name }
+                    </Text>
+                }
+                <View style={ styles.controlsContainer }>
+                  <Icon style={ styles.stopIco } name='controller-stop' type='entypo' onPress={ this.stop } />
+                  <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                    <Icon style={ styles.volIco } name='arrow-bold-left' type='entypo' onPress={ volumeUp } />
+                    <Icon style={ styles.volIco } name='volume-2' type='feather' />
+                    <Icon style={ styles.volIco } name='arrow-bold-right' type='entypo' onPress={ volumeDown } />
+                  </View>
+                </View>
+
+              </View>
           }
           <View style={styles.container}>
             {
@@ -145,36 +120,3 @@ export default class App extends Component<{}> {
     }
   }
 }
-
-const styles = StyleSheet.create({
-  cardStyle: {
-    backgroundColor: '#00ff66',
-    marginBottom: 10
-  },
-  scrollView: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'stretch',
-    backgroundColor: '#F5FCFF',
-    padding: 20,
-    marginTop: Platform.OS === 'android' ? 56 : 0,
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  col: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    marginLeft: 7, marginRight: 7,
-  },
-  legendLabel: {
-    textAlign: 'center',
-    color: '#666666',
-    marginTop: 10, marginBottom: 20,
-    fontSize: 12,
-    fontWeight: '600',
-  }
-})
