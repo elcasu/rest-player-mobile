@@ -1,4 +1,6 @@
-import { AppRegistry } from 'react-native';
-import App from './App';
+import { AppRegistry } from 'react-native'
+import App from './App'
 
-AppRegistry.registerComponent('reactRestPlayer', () => App);
+GLOBAL.XMLHttpRequest = GLOBAL.originalXMLHttpRequest || GLOBAL.XMLHttpRequest
+
+AppRegistry.registerComponent('reactRestPlayer', () => App)

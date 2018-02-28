@@ -17,13 +17,15 @@ export const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    position: 'relative'
+    // position: 'absolute'
   },
   container: {
     flex: 1,
-    alignItems: 'stretch',
+    // alignItems: 'stretch',
     backgroundColor: '#F5FCFF',
-    padding: 20,
-    marginTop: Platform.OS === 'android' ? 56 : 0,
+    flexDirection: 'column',
+    justifyContent: 'center'
   },
   row: {
     flexDirection: 'row',
@@ -40,6 +42,18 @@ export const styles = StyleSheet.create({
     marginTop: 10, marginBottom: 20,
     fontSize: 12,
     fontWeight: '600',
+  },
+  header: {
+    alignItems: 'center',
+    position: 'absolute',
+    backgroundColor: '#03A9F4',
+    left: 0,
+    right: 0,
+    height: 100
+  },
+  headerWrapper: {
+    flex: 1,
+    position: 'relative',
+    height: 500
   }
 })
-

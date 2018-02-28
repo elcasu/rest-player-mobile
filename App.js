@@ -25,6 +25,7 @@ import {
   getMaxVolume,
   onVolumeChange
 } from 'react-native-volume'
+import io from 'socket.io-client'
 import {
   getVideos,
   playVideo,
@@ -46,23 +47,71 @@ export default class App extends Component<{}> {
       videos: []
     }
     this.stop = this.stop.bind(this)
+    this._updateHeader = this._updateHeader.bind(this)
+    this._playVideo = this._playVideo.bind(this)
+    this.socket = io('http://pi.home.lan:7000');
+    // this.socket = io({
+    //   path: 'ws://pi.home.lan:7000',
+    //   transports: ['websocket']
+    // })
+    this.socket.on('player', result => {
+      this._updateHeader(result)
+    })
+  }
+
+  async _updateHeader(result) {
+    switch (result.state.status) {
+      case 'STOPPED':
+        this.setState({ isPlaying: false })
+        break
+      case 'PLAYING':
+        this.setState({
+          isPlaying: true,
+          currentVideo: result.state.video
+        })
+        break
+    }
   }
 
   async componentDidMount() {
-    const videos = await getVideos()
+    const response = await getVideos()
     this.setState({
-      videos,
+      videos: response.videos,
       isLoading: false
     })
     onVolumeChange(volume => alert(volume))
   }
 
-  async _onVideoPress (video) {
+  async _playVideo(video) {
     this.setState({
       isPlaying: true,
       currentVideo: video
     })
     await playVideo(video)
+  }
+
+  async _onVideoPress (video) {
+    if (this.state.isPlaying) {
+      Alert.alert(
+        `Ya se está reproduciendo ${this.state.currentVideo.name}`,
+        `Seguro que querés reproducir ${video.name}?`,
+        [
+          {
+            text: 'Si, reproducir',
+            onPress: async () => {
+              await this._playVideo(video)
+            }
+          },
+          {
+            text: 'No, seguir con el actual',
+            style: 'cancel'
+          },
+        ]
+      )
+    }
+    else {
+      await this._playVideo(video)
+    }
   }
 
   async stop() {
@@ -80,42 +129,50 @@ export default class App extends Component<{}> {
     }
     else {
       return (
-        <ScrollView style={styles.scrollView}>
+        <View style={ styles.headerWrapper }>
           {
-            this.state.isPlaying && 
-              <View style={{ alignItems: 'center' }}>
-                {
-                  this.state.currentVideo &&
-                    <Text style={ styles.legendLabel }>
-                      { this.state.currentVideo.name }
-                    </Text>
-                }
-                <View style={ styles.controlsContainer }>
-                  <Icon style={ styles.stopIco } name='controller-stop' type='entypo' onPress={ this.stop } />
-                  <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
-                    <Icon style={ styles.volIco } name='arrow-bold-left' type='entypo' onPress={ volumeUp } />
-                    <Icon style={ styles.volIco } name='volume-2' type='feather' />
-                    <Icon style={ styles.volIco } name='arrow-bold-right' type='entypo' onPress={ volumeDown } />
-                  </View>
+            this.state.isPlaying ? (
+            <View style={styles.header}>
+              {
+                this.state.currentVideo &&
+                  <Text style={ styles.legendLabel }>
+                    { this.state.currentVideo.name }
+                  </Text>
+              }
+              <View style={ styles.controlsContainer }>
+                <Icon style={ styles.stopIco } name='controller-stop' type='entypo' onPress={ this.stop } />
+                <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                  <Icon style={ styles.volIco } name='arrow-bold-left' type='entypo' onPress={ volumeUp } />
+                  <Icon style={ styles.volIco } name='volume-2' type='feather' />
+                  <Icon style={ styles.volIco } name='arrow-bold-right' type='entypo' onPress={ volumeDown } />
                 </View>
-
               </View>
+            </View>
+            ) : (
+              <View style={styles.header}>
+                <Text style={ styles.legendLabel }>
+                  Ninguna peli en reproducción
+                </Text>
+              </View>
+            )
           }
-          <View style={styles.container}>
-            {
-              this.state.videos.map(video => {
-                return (
-                  <TouchableHighlight key={video._id} style={styles.cardStyle} onPress={() => this._onVideoPress(video)}>
-                    <View>
-                      <Text style={[styles.legendLabel, {padding:0}]}>{video.name}</Text>
-                      <Text style={theme.cardContentStyle}>{video.path}</Text>
-                    </View>
-                  </TouchableHighlight>
-                )
-              })
-            }
-          </View>
-        </ScrollView>
+          <ScrollView style={styles.scrollView}>
+            <View style={styles.container}>
+              {
+                this.state.videos.map(video => {
+                  return (
+                    <TouchableHighlight key={video._id} style={styles.cardStyle} onPress={() => this._onVideoPress(video)}>
+                      <View>
+                        <Text style={[styles.legendLabel, {padding:0}]}>{video.name}</Text>
+                        <Text style={theme.cardContentStyle}>{video.path}</Text>
+                      </View>
+                    </TouchableHighlight>
+                  )
+                })
+              }
+            </View>
+          </ScrollView>
+        </View>
       )
     }
   }
