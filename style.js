@@ -3,10 +3,17 @@ import {
   Platform
 } from 'react-native'
 
+export const rawStyles = {
+  cardStyle: {
+    backgroundColor: '#00ff66',
+    marginBottom: 10,
+    padding: 20
+  }
+}
+
 export const styles = StyleSheet.create({
   cardStyle: {
-    // backgroundColor: '#00ff66',
-    backgroundColor: '#dddddd',
+    backgroundColor: '#00ff66',
     marginBottom: 10
   },
   controlsContainer: {
@@ -18,11 +25,9 @@ export const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     position: 'relative'
-    // position: 'absolute'
   },
   container: {
     flex: 1,
-    // alignItems: 'stretch',
     backgroundColor: '#F5FCFF',
     flexDirection: 'column',
     justifyContent: 'center'
@@ -45,15 +50,13 @@ export const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    position: 'absolute',
-    backgroundColor: '#03A9F4',
     left: 0,
     right: 0,
-    height: 100
+    height: 100,
+    paddingBottom: 20
   },
   headerWrapper: {
     flex: 1,
-    position: 'relative',
-    height: 500
+    position: 'relative'
   }
 })

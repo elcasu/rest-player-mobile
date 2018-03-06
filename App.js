@@ -13,10 +13,7 @@ import {
   TouchableHighlight,
   StatusBar
 } from 'react-native'
-import {
-  getTheme,
-  mdl
-} from 'react-native-material-kit'
+import { Card } from 'react-native-material-ui';
 import NavigationBar from 'react-native-navbar'
 import { Icon } from 'react-native-elements'
 import {
@@ -33,9 +30,24 @@ import {
   volumeUp,
   volumeDown
 } from './api'
-import { styles } from './style'
 
-const theme = getTheme()
+import { styles, rawStyles } from './style'
+
+import { COLOR, ThemeProvider } from 'react-native-material-ui';
+
+const uiTheme = {
+    palette: {
+        primaryColor: COLOR.green500,
+    },
+    cardStyle: {
+      backgroundColor: '#00ff66',
+    },
+    toolbar: {
+        container: {
+            height: 50,
+        },
+    },
+}
 
 export default class App extends Component<{}> {
   constructor() {
@@ -49,11 +61,9 @@ export default class App extends Component<{}> {
     this.stop = this.stop.bind(this)
     this._updateHeader = this._updateHeader.bind(this)
     this._playVideo = this._playVideo.bind(this)
-    this.socket = io('http://pi.home.lan:7000');
-    // this.socket = io({
-    //   path: 'ws://pi.home.lan:7000',
-    //   transports: ['websocket']
-    // })
+    this.socket = io('http://pi.home.lan:7000', {
+      transports: ['websocket']
+    })
     this.socket.on('player', result => {
       this._updateHeader(result)
     })
@@ -129,50 +139,72 @@ export default class App extends Component<{}> {
     }
     else {
       return (
-        <View style={ styles.headerWrapper }>
-          {
-            this.state.isPlaying ? (
-            <View style={styles.header}>
-              {
-                this.state.currentVideo &&
-                  <Text style={ styles.legendLabel }>
-                    { this.state.currentVideo.name }
-                  </Text>
-              }
-              <View style={ styles.controlsContainer }>
-                <Icon style={ styles.stopIco } name='controller-stop' type='entypo' onPress={ this.stop } />
-                <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
-                  <Icon style={ styles.volIco } name='arrow-bold-left' type='entypo' onPress={ volumeUp } />
-                  <Icon style={ styles.volIco } name='volume-2' type='feather' />
-                  <Icon style={ styles.volIco } name='arrow-bold-right' type='entypo' onPress={ volumeDown } />
+        <ThemeProvider uiTheme={ uiTheme }>
+          <View style={ styles.headerWrapper }>
+            {
+              this.state.isPlaying ? (
+              <View style={styles.header}>
+                {
+                  this.state.currentVideo &&
+                    <Text style={ styles.legendLabel }>
+                      { this.state.currentVideo.name }
+                    </Text>
+                }
+                <View style={ styles.controlsContainer }>
+                  <Icon
+                    style={ styles.stopIco }
+                    name='controller-stop'
+                    type='entypo'
+                    onPress={ this.stop }
+                  />
+                  <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                    <Icon
+                      style={ styles.volIco }
+                      name='arrow-bold-left'
+                      type='entypo'
+                      onPress={ volumeDown }
+                    />
+                    <Icon
+                      style={ styles.volIco }
+                      name='volume-2'
+                      type='feather'
+                    />
+                    <Icon
+                      style={ styles.volIco }
+                      name='arrow-bold-right'
+                      type='entypo'
+                      onPress={ volumeUp }
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-            ) : (
-              <View style={styles.header}>
-                <Text style={ styles.legendLabel }>
-                  Ninguna peli en reproducción
-                </Text>
-              </View>
-            )
-          }
-          <ScrollView style={styles.scrollView}>
-            <View style={styles.container}>
-              {
-                this.state.videos.map(video => {
-                  return (
-                    <TouchableHighlight key={video._id} style={styles.cardStyle} onPress={() => this._onVideoPress(video)}>
-                      <View>
+              ) : (
+                <View style={styles.header}>
+                  <Text style={ styles.legendLabel }>
+                    Ninguna peli en reproducción
+                  </Text>
+                </View>
+              )
+            }
+            <ScrollView style={styles.scrollView}>
+              <View>
+                {
+                  this.state.videos.map(video => {
+                    return (
+                      <Card
+                        key={video._id}
+                        onPress={() => this._onVideoPress(video)}
+                      >
                         <Text style={[styles.legendLabel, {padding:0}]}>{video.name}</Text>
-                        <Text style={theme.cardContentStyle}>{video.path}</Text>
-                      </View>
-                    </TouchableHighlight>
-                  )
-                })
-              }
-            </View>
-          </ScrollView>
-        </View>
+                        <Text>{video.path}</Text>
+                      </Card>
+                    )
+                  })
+                }
+              </View>
+            </ScrollView>
+          </View>
+        </ThemeProvider>
       )
     }
   }

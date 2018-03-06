@@ -12,9 +12,9 @@
     "react": "16.0.0",
     "react-native": "0.51.0",
     "react-native-elements": "^0.18.5",
-    "react-native-material-kit": "^0.5.1",
+    "react-native-material-ui": "^1.20.0",
     "react-native-navbar": "^2.1.0",
-    "react-native-vector-icons": "^4.4.2",
+    "react-native-vector-icons": "^4.5.0",
     "react-native-volume": "0.0.1",
     "socket.io-client": "^2.0.4"
   },
