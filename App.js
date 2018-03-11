@@ -13,7 +13,6 @@ import {
   TouchableHighlight,
   StatusBar
 } from 'react-native'
-import { Card } from 'react-native-material-ui';
 import NavigationBar from 'react-native-navbar'
 import { Icon } from 'react-native-elements'
 import {
@@ -23,6 +22,20 @@ import {
   onVolumeChange
 } from 'react-native-volume'
 import io from 'socket.io-client'
+
+// material
+import {
+  Card,
+  CardTitle,
+  CardContent,
+  CardAction,
+  CardButton
+} from 'react-native-material-cards'
+// import {
+//   getTheme
+// } from 'react-native-material-kit'
+// const theme = getTheme()
+
 import {
   getVideos,
   playVideo,
@@ -32,22 +45,6 @@ import {
 } from './api'
 
 import { styles, rawStyles } from './style'
-
-import { COLOR, ThemeProvider } from 'react-native-material-ui';
-
-const uiTheme = {
-    palette: {
-        primaryColor: COLOR.green500,
-    },
-    cardStyle: {
-      backgroundColor: '#00ff66',
-    },
-    toolbar: {
-        container: {
-            height: 50,
-        },
-    },
-}
 
 export default class App extends Component<{}> {
   constructor() {
@@ -139,72 +136,85 @@ export default class App extends Component<{}> {
     }
     else {
       return (
-        <ThemeProvider uiTheme={ uiTheme }>
-          <View style={ styles.headerWrapper }>
-            {
-              this.state.isPlaying ? (
-              <View style={styles.header}>
-                {
-                  this.state.currentVideo &&
-                    <Text style={ styles.legendLabel }>
-                      { this.state.currentVideo.name }
-                    </Text>
-                }
-                <View style={ styles.controlsContainer }>
-                  <Icon
-                    style={ styles.stopIco }
-                    name='controller-stop'
-                    type='entypo'
-                    onPress={ this.stop }
-                  />
-                  <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
-                    <Icon
-                      style={ styles.volIco }
-                      name='arrow-bold-left'
-                      type='entypo'
-                      onPress={ volumeDown }
-                    />
-                    <Icon
-                      style={ styles.volIco }
-                      name='volume-2'
-                      type='feather'
-                    />
-                    <Icon
-                      style={ styles.volIco }
-                      name='arrow-bold-right'
-                      type='entypo'
-                      onPress={ volumeUp }
-                    />
-                  </View>
-                </View>
-              </View>
-              ) : (
-                <View style={styles.header}>
+        <View style={ styles.headerWrapper }>
+          {
+            this.state.isPlaying ? (
+            <View style={styles.header}>
+              {
+                this.state.currentVideo &&
                   <Text style={ styles.legendLabel }>
-                    Ninguna peli en reproducción
+                    { this.state.currentVideo.name }
                   </Text>
+              }
+              <View style={ styles.controlsContainer }>
+                <Icon
+                  style={ styles.stopIco }
+                  name='controller-stop'
+                  type='entypo'
+                  onPress={ this.stop }
+                />
+                <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                  <Icon
+                    style={ styles.volIco }
+                    name='arrow-bold-left'
+                    type='entypo'
+                    onPress={ volumeDown }
+                  />
+                  <Icon
+                    style={ styles.volIco }
+                    name='volume-2'
+                    type='feather'
+                  />
+                  <Icon
+                    style={ styles.volIco }
+                    name='arrow-bold-right'
+                    type='entypo'
+                    onPress={ volumeUp }
+                  />
                 </View>
-              )
-            }
-            <ScrollView style={styles.scrollView}>
-              <View>
-                {
-                  this.state.videos.map(video => {
-                    return (
-                      <Card
-                        key={video._id}
-                        onPress={() => this._onVideoPress(video)}
-                      >
-                        <Text style={[styles.legendLabel, {padding:0}]}>{video.name}</Text>
-                        <Text>{video.path}</Text>
-                      </Card>
-                    )
-                  })
-                }
               </View>
-            </ScrollView>
-          </View>
-        </ThemeProvider>
+            </View>
+            ) : (
+              <View style={styles.header}>
+                <Text style={ styles.legendLabel }>
+                  Ninguna peli en reproducción
+                </Text>
+              </View>
+            )
+          }
+          <ScrollView style={styles.scrollView}>
+            <View>
+              {
+                this.state.videos.map(video => {
+                  return (
+                    <Card
+                      key={video._id}
+                      style={ styles.cardStyle }
+                    >
+                      <CardTitle title={video.name} />
+                      <CardAction separator={true} inColumn={false}>
+                        {
+                          this.state.currentVideo &&
+                          this.state.currentVideo._id === video._id ? (
+                            <View style={ styles.playingWrapper }>
+                              <Text style={ styles.playingText }>REPRODUCIENDO...</Text>
+                            </View>
+                          ) : (
+                            <CardButton
+                              onPress={() => this._onVideoPress(video)}
+                              title="Reproducir"
+                              color="#00BFA5"
+                            />
+                          )
+                        }
+                      </CardAction>
+                    </Card>
+                  )
+                })
+              }
+            </View>
+          </ScrollView>
+        </View>
       )
     }
   }

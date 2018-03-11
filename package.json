@@ -12,6 +12,8 @@
     "react": "16.0.0",
     "react-native": "0.51.0",
     "react-native-elements": "^0.18.5",
+    "react-native-material-cards": "https://github.com/SiDevesh/React-Native-Material-Cards#master",
+    "react-native-material-kit": "^0.5.1",
     "react-native-material-ui": "^1.20.0",
     "react-native-navbar": "^2.1.0",
     "react-native-vector-icons": "^4.5.0",
