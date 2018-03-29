@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "android-release": "react-native run-android --variant=release",
     "test": "jest",
     "react-devtools": "react-devtools"
   },
   "dependencies": {
     "@expo/vector-icons": "^6.2.2",
     "react": "16.0.0",
+    "react-dom": "^16.2.0",
     "react-native": "0.51.0",
     "react-native-elements": "^0.18.5",
     "react-native-material-cards": "https://github.com/SiDevesh/React-Native-Material-Cards#master",

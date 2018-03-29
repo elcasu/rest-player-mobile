@@ -24,25 +24,31 @@ import {
 import io from 'socket.io-client'
 
 // material
-import {
-  Card,
-  CardTitle,
-  CardContent,
-  CardAction,
-  CardButton
-} from 'react-native-material-cards'
 // import {
-//   getTheme
-// } from 'react-native-material-kit'
-// const theme = getTheme()
+//   Card,
+//   CardTitle,
+//   CardContent,
+//   CardAction,
+//   CardButton
+// } from 'react-native-material-ui/Card'
+import {
+  getTheme,
+  MKButton
+} from 'react-native-material-kit'
+const theme = getTheme()
+
+import { ThemeProvider } from 'react-native-material-ui'
 
 import {
   getVideos,
   playVideo,
   stopVideo,
   volumeUp,
-  volumeDown
-} from './api'
+  volumeDown,
+  baseUrl
+} from './api/mockedApi'
+
+import Card from './components/card'
 
 import { styles, rawStyles } from './style'
 
@@ -58,7 +64,7 @@ export default class App extends Component<{}> {
     this.stop = this.stop.bind(this)
     this._updateHeader = this._updateHeader.bind(this)
     this._playVideo = this._playVideo.bind(this)
-    this.socket = io('http://pi.home.lan:7000', {
+    this.socket = io(baseUrl, {
       transports: ['websocket']
     })
     this.socket.on('player', result => {
@@ -69,7 +75,10 @@ export default class App extends Component<{}> {
   async _updateHeader(result) {
     switch (result.state.status) {
       case 'STOPPED':
-        this.setState({ isPlaying: false })
+        this.setState({
+          isPlaying: false,
+          currentVideo: undefined
+        })
         break
       case 'PLAYING':
         this.setState({
@@ -136,85 +145,98 @@ export default class App extends Component<{}> {
     }
     else {
       return (
-        <View style={ styles.headerWrapper }>
-          {
-            this.state.isPlaying ? (
-            <View style={styles.header}>
-              {
-                this.state.currentVideo &&
-                  <Text style={ styles.legendLabel }>
-                    { this.state.currentVideo.name }
-                  </Text>
-              }
-              <View style={ styles.controlsContainer }>
-                <Icon
-                  style={ styles.stopIco }
-                  name='controller-stop'
-                  type='entypo'
-                  onPress={ this.stop }
-                />
-                <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
+        <ThemeProvider>
+          <View style={ styles.headerWrapper }>
+            {
+              this.state.isPlaying ? (
+              <View style={styles.header}>
+                {
+                  this.state.currentVideo &&
+                    <Text style={ styles.legendLabel }>
+                      { this.state.currentVideo.name }
+                    </Text>
+                }
+                <View style={ styles.controlsContainer }>
                   <Icon
-                    style={ styles.volIco }
-                    name='arrow-bold-left'
+                    style={ styles.stopIco }
+                    name='controller-stop'
                     type='entypo'
-                    onPress={ volumeDown }
+                    onPress={ this.stop }
                   />
-                  <Icon
-                    style={ styles.volIco }
-                    name='volume-2'
-                    type='feather'
-                  />
-                  <Icon
-                    style={ styles.volIco }
-                    name='arrow-bold-right'
-                    type='entypo'
-                    onPress={ volumeUp }
-                  />
+                  <View style={{ flex: 1, justifyContent: 'flex-end', flexDirection: 'row' }}>
+                    <Icon
+                      style={ styles.volIco }
+                      name='arrow-bold-left'
+                      type='entypo'
+                      onPress={ volumeDown }
+                    />
+                    <Icon
+                      style={ styles.volIco }
+                      name='volume-2'
+                      type='feather'
+                    />
+                    <Icon
+                      style={ styles.volIco }
+                      name='arrow-bold-right'
+                      type='entypo'
+                      onPress={ volumeUp }
+                    />
+                  </View>
                 </View>
               </View>
-            </View>
-            ) : (
-              <View style={styles.header}>
-                <Text style={ styles.legendLabel }>
-                  Ninguna peli en reproducción
-                </Text>
+              ) : (
+                <View style={styles.header}>
+                  <Text style={ styles.legendLabel }>
+                    Ninguna peli en reproducción
+                  </Text>
+                </View>
+              )
+            }
+            <ScrollView style={styles.scrollView}>
+              <View>
+                {
+                  this.state.videos.map(video => {
+                    const oldStyle = (
+                      <View key={video._id} style={ theme.cardStyle }>
+                        <Text style={ theme.cardTitleStyle }>{ video.name }</Text>
+                        <View style={{ padding: 15 }}>
+                          <View style={ theme.cardAction }>
+                            {
+                              this.state.currentVideo &&
+                              this.state.currentVideo._id === video._id ? (
+                                <View style={ styles.playingWrapper }>
+                                  <Text style={ styles.playingText }>REPRODUCIENDO...</Text>
+                                </View>
+                              ) : (
+                                <MKButton onPress={() => this._onVideoPress(video)}>
+                                  <Text>Reproducir</Text>
+                                </MKButton>
+                              )
+                            }
+                          </View>
+                        </View>
+                      </View>
+                    )
+
+                    const placeholder = `${baseUrl}/poster-placeholder.png`
+                    const current = this.state.currentVideo
+                    const isPlaying = current && current._id === video._id
+
+                    return (
+                      <Card 
+                        key={ video._id }
+                        title={ video.name }
+                        imageUrl={ video.image ? video.image.url : placeholder }
+                        onAction={ () => this._onVideoPress(video) }
+                        isPlaying={ isPlaying }
+                      />
+                    )
+                  })
+                }
               </View>
-            )
-          }
-          <ScrollView style={styles.scrollView}>
-            <View>
-              {
-                this.state.videos.map(video => {
-                  return (
-                    <Card
-                      key={video._id}
-                      style={ styles.cardStyle }
-                    >
-                      <CardTitle title={video.name} />
-                      <CardAction separator={true} inColumn={false}>
-                        {
-                          this.state.currentVideo &&
-                          this.state.currentVideo._id === video._id ? (
-                            <View style={ styles.playingWrapper }>
-                              <Text style={ styles.playingText }>REPRODUCIENDO...</Text>
-                            </View>
-                          ) : (
-                            <CardButton
-                              onPress={() => this._onVideoPress(video)}
-                              title="Reproducir"
-                              color="#00BFA5"
-                            />
-                          )
-                        }
-                      </CardAction>
-                    </Card>
-                  )
-                })
-              }
-            </View>
-          </ScrollView>
-        </View>
+            </ScrollView>
+          </View>
+        </ThemeProvider>
       )
     }
   }

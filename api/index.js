@@ -1,5 +1,7 @@
-const BASE_API_URL = 'http://pi.home.lan:7000/api'
-//const BASE_API_URL = 'http://192.168.3.105:7000/api'
+const API_DOMAIN = 'http://pi.home.lan:7000'
+const BASE_API_URL = `${API_DOMAIN}/api`
+
+export const baseUrl = BASE_API_URL
 
 export async function getVideos() {
   try {

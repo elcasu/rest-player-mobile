@@ -1,0 +1,107 @@
+{
+  "videos": [
+    {
+      "name":"Casi Hacker",
+      "path":"/home/pi/videos/casi-hacker.mp4",
+      "_id":"5a370671cb9d7b092fb306ef",
+      "__v":0
+    },
+    {
+      "name":"Benja pianito :-)",
+      "path":"/home/pi/videos/20140314_171608.mp4",
+      "_id":"5a370670cb9d7b092fb306ed",
+      "__v":0
+    },
+    {
+      "name":"Big Hero - Español",
+      "path":"/home/pi/videos/big-hero-6.mkv",
+      "_id":"5a370f7a13306509f4427b92",
+      "__v":0,
+      "image": {
+        "name":"avatar.jpeg",
+        "path":"/tmp/c35125b5e86a98462b4930f4e6a550d7",
+        "url": "http://10.0.2.2:3000/big-hero-6.jpg"
+      }
+    },
+    {
+      "name":"jorge el curioso 3",
+      "path":"/home/pi/videos/curious-george-3.mp4",
+      "_id":"5a3da3aeb5d07c0897f3b567",
+      "__v":0,
+      "image": {
+        "name":"avatar.jpeg",
+        "path":"/tmp/c35125b5e86a98462b4930f4e6a550d7",
+        "url": "http://10.0.2.2:3000/jorge3.jpg"
+      }
+    },
+    {
+      "name":"Perros",
+      "path":"/home/pi/videos/perros.mp4",
+      "_id":"5a3f9f254fb72c12dffaf254",
+      "__v":0
+    },
+    {
+      "_id":"5a6bd74b82a4cc93085d1dd4",
+      "name":"Deep el pulpo",
+      "path":"/home/pi/videos/deep.mp4",
+      "image": {
+        "name":"avatar.jpeg",
+        "path":"/tmp/c35125b5e86a98462b4930f4e6a550d7",
+        "url": "http://10.0.2.2:3000/deep-el-pulpo.jpg"
+      }
+    },
+    {
+      "name":"Kung fu panda 3",
+      "path":"/home/pi/videos/kung-fu-panda-3.m4v",
+      "_id":"5a40258153ed111676f0223b",
+      "__v":0
+    },
+    {
+      "name":"Disney cortos",
+      "path":"/home/pi/videos/disney-cortos.m4v",
+      "_id":"5a3fd95bf9ce0514f55ad9ba",
+      "__v":0
+    },
+    {
+      "_id":"5a7f2be664463ddf12b2c5ea",
+      "name":"Odd Ball",
+      "path":"/home/pi/videos/oddballs.mp4",
+      "image": {
+        "name":"avatar.jpeg",
+        "path":"/tmp/c35125b5e86a98462b4930f4e6a550d7",
+        "url": "http://10.0.2.2:3000/oddball.png"
+      }
+    },
+    {
+      "_id":"5a843f6764463ddf12b2c5eb",
+      "name":"Video corto de TEST",
+      "path":"/home/pi/videos/video_2018-02-14_10-50-21.mp4"
+    },
+    {
+      "_id":"5a862ec8ee2587de6cad9a41",
+      "name":"Olé - El viaje de Ferdinand",
+      "path":"/home/pi/videos/ole.mp4",
+      "image": {
+        "name":"avatar.jpeg",
+        "path":"/tmp/c35125b5e86a98462b4930f4e6a550d7",
+        "url": "http://10.0.2.2:3000/ole.jpg"
+      }
+    },
+    {
+      "__v":0,
+      "_id":"5a3eb232b0dd7e0dc77851cc",
+      "name":"Cars 32",
+      "path":"/home/pi/videos/cars-3.m4v",
+      "image": {
+        "name":"avatar.jpeg",
+        "path":"/tmp/c35125b5e86a98462b4930f4e6a550d7",
+        "url": "http://10.0.2.2:3000/cars3.jpg"
+      }
+    }
+  ],
+  "state": {
+    "__v":0,
+    "_id":"5a819f986939fa1f22451219",
+    "status":"STOPPED"
+  }
+}
